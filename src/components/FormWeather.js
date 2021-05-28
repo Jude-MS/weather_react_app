@@ -2,14 +2,15 @@ import React, {useState} from 'react';
 
 function FormWeather(props) {
     const [ info, setInfo ] = useState('');
+    const [ from, setFrom ] = useState('');
     
   function handleChange(e) {
     setInfo(e.target.value);
   }
     
   function handleSubmit(e) {
-    if(info !== '') {
-      props.handleSubmit(info);
+    if(info !== '' && from !== '') {
+      props.handleSubmit({info, from});
       setInfo('');
     }
     e.preventDefault();
@@ -25,6 +26,10 @@ function FormWeather(props) {
               </label>
               <div className="ui icon input">
                 <input type="text" placeholder="City Name" onChange={handleChange} value={info.toLowerCase()}/>
+                <i aria-hidden="true" className="search icon"></i>
+              </div>
+              <div className="ui icon input">
+                <input type="text" placeholder="Origen" onChange={e => setFrom(e.target.value)} value={from.toLowerCase()}/>
                 <i aria-hidden="true" className="search icon"></i>
               </div>
             </div>

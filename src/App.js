@@ -8,15 +8,16 @@ function App() {
   const [valuesOfCity, setValuesOfCity] = useState({});
   const [weatherInfo, setWeatherInfo] = useState([]);
 
-  const handleCity = async (val) => {
-    if (val) {
+  const handleCity = async ({info, from}) => {
+    if (info) {
       const resp = await fetch(
-        `https://search.reservamos.mx/api/v2/places?q=${val}`
+        `https://search.reservamos.mx/api/v2/places?q=${info}&from=${from}`
       )
         .then((response) => response.json())
         .catch((e) => {
           throw new Error(e);
         });
+      console.log('resp', resp);
       const dataOfCity = resp[0];
       setValuesOfCity(dataOfCity);
       if (dataOfCity) {
@@ -33,11 +34,23 @@ function App() {
     }
   };
 
+
+
+    const max_hum = weatherInfo.reduce((acc, val, i) => {
+        if(val.humidity > acc.hum){
+          return {i, hum: val.hum}
+        }
+        return acc;
+    }, {i: 0, hum: 0});
+
+
+
+
   const renderCityInfo = () => {
     if (weatherInfo && weatherInfo.length > 0 && valuesOfCity) {
       return (
         <div className="ui teal centered cards">
-          {weatherInfo.map((city) => {
+          {weatherInfo.map((city, i) => {
             let weatherResObj = {
               city_name: valuesOfCity.city_name,
               state: valuesOfCity.state,
@@ -45,6 +58,7 @@ function App() {
               temp_max: city.temp.max,
               temp_min: city.temp.min,
               description: city.weather[0].description,
+              max_hum: i === max_hum.i
             };
             return <CardWeather key={city.dt} weather={weatherResObj} />;
           })}
